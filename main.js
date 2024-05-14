@@ -5,9 +5,15 @@ menus.forEach(menu=>menu.addEventListener("click",(event)=>getNewsByCategory(eve
 
 let url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`)
 
+let totalResult = 0
+let page = 1
+const pageSize = 10
+const GroupSize = 5
 
 const getNews = async() =>{
     try{
+        url.searchParams.set("page",page) // &page=page
+        url.searchParams.set("pageSize",pageSize)
         const response = await fetch(url)
     const data = await response.json()
     if(response.status === 200){
@@ -15,13 +21,15 @@ const getNews = async() =>{
             throw new Error("NO RESULT FOR THIS RESEARCH")
         }
     newsList=data.articles
+    totalResult = data.totalResults
     render()
+    paginationRender()
     }else{
         throw new Error(data.message)
     }
 
     }catch(error){
-        errorRander(error.message)
+        errorRender(error.message)
     }
 }
 
@@ -75,13 +83,40 @@ const render = () => {
     document.getElementById("news-board").innerHTML=newsHTML
 };
 
-const errorRander = (errorMessage) =>{
+const errorRender = (errorMessage) =>{
     const errorHTML = `<div class="alert alert-danger" role="alert">
     ${errorMessage}
   </div>`
 
   document.getElementById("news-board").innerHTML=errorHTML
 }
+
+
+const paginationRender=()=>{
+
+const pageGroup = Math.ceil(page / GroupSize)
+const totalPages = Math.ceil(totalResult/pageSize)
+const lastPage = pageGroup * GroupSize
+if(lastPage>totalPages){
+    lastPage=totalPages
+}
+const firstPage = lastPage - (GroupSize - 1) <= 0 ? 1 : lastPage - (GroupSize - 1)
+
+let paginationHTML =``
+
+for(let i=firstPage;i<=lastPage;i++){
+    paginationHTML+=`<li class="page-item ${i===page?active:""}" onclick="moveToPage"><a class="page-link">${i}</a></li>`
+}
+
+
+document.querySelector(".pagination").innerHTML=paginationHTML
+}
+
+const moveToPage = (pageNum) => {
+    page = pageNum
+    getNews()
+}
+
 
 
 getLatesNews(); 
