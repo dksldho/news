@@ -100,15 +100,16 @@ const lastPage = pageGroup * GroupSize
 if(lastPage>totalPages){
     lastPage=totalPages
 }
-const firstPage = lastPage - (GroupSize - 1) <= 0 ? 1 : lastPage - (GroupSize - 1)
+const firstPage = 
+lastPage - (GroupSize - 1) <= 0 ? 1: lastPage - (GroupSize - 1)
 
-let paginationHTML =``
+let paginationHTML =`<li class="page-item"onclick="moveToPage(${page-1})"><a class="page-link" href="#">Previous</a></li>`
 
 for(let i=firstPage;i<=lastPage;i++){
-    paginationHTML+=`<li class="page-item ${i===page?active:""}" onclick="moveToPage"><a class="page-link">${i}</a></li>`
+    paginationHTML+=`<li class="page-item ${i===page?"active":""}" onclick=moveToPage(${i}) ><a class="page-link">${i}</a></li>`
 }
 
-
+paginationHTML += `<li class="page-item" onclick="moveToPage(${page+1})"><a class="page-link" href="#">Next</a></li>`
 document.querySelector(".pagination").innerHTML=paginationHTML
 }
 
@@ -123,4 +124,4 @@ getLatesNews();
 
 //1. 버튼에 클릭이벤트
 //2.카테고리별 뉴스 가져오기
-//3. 뉴스 보여주기
+//3. 뉴스 보여주
